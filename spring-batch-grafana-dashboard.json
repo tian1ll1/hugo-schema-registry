@@ -55,6 +55,119 @@
           "showHeader": true
         },
         "gridPos": {"h": 10, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "type": "barchart",
+        "title": "Job Average Duration (by Job Name)",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "sum by (job) (rate(spring_batch_job_duration_seconds_sum[5m])) / sum by (job) (rate(spring_batch_job_duration_seconds_count[5m]))",
+            "legendFormat": "{{job}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {},
+          "overrides": []
+        },
+        "options": {
+          "orientation": "vertical",
+          "showValue": true
+        },
+        "gridPos": {"h": 10, "w": 12, "x": 0, "y": 10}
+      },
+      {
+        "type": "timeseries",
+        "title": "Job Execution Count Trend (per hour)",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "sum by (job) (increase(spring_batch_job_duration_seconds_count[1h]))",
+            "legendFormat": "{{job}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {},
+          "overrides": []
+        },
+        "options": {
+          "legend": {
+            "displayMode": "table",
+            "placement": "bottom"
+          }
+        },
+        "gridPos": {"h": 10, "w": 12, "x": 12, "y": 10}
+      },
+      {
+        "type": "barchart",
+        "title": "Step Average Duration (by Step Name)",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "sum by (job, step) (rate(spring_batch_step_duration_seconds_sum[5m])) / sum by (job, step) (rate(spring_batch_step_duration_seconds_count[5m]))",
+            "legendFormat": "{{job}}-{{step}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {},
+          "overrides": []
+        },
+        "options": {
+          "orientation": "vertical",
+          "showValue": true
+        },
+        "gridPos": {"h": 10, "w": 12, "x": 0, "y": 20}
+      },
+      {
+        "type": "piechart",
+        "title": "Step Success vs Failure (Last 24h)",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "sum by (job, step) (increase(spring_batch_step{status=\"COMPLETED\"}[1d]))",
+            "legendFormat": "{{job}}-{{step}} Success"
+          },
+          {
+            "expr": "sum by (job, step) (increase(spring_batch_step{status=\"FAILED\"}[1d]))",
+            "legendFormat": "{{job}}-{{step}} Failure"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {},
+          "overrides": []
+        },
+        "options": {
+          "legend": {
+            "displayMode": "table",
+            "placement": "right"
+          },
+          "pieType": "pie",
+          "displayLabels": ["percent", "value"]
+        },
+        "gridPos": {"h": 10, "w": 12, "x": 12, "y": 20}
+      },
+      {
+        "type": "table",
+        "title": "Recent Failed Jobs/Steps",
+        "datasource": "Prometheus",
+        "targets": [
+          {
+            "expr": "spring_batch_job{status=\"FAILED\"}",
+            "legendFormat": "Job: {{job}}"
+          },
+          {
+            "expr": "spring_batch_step{status=\"FAILED\"}",
+            "legendFormat": "Step: {{job}}-{{step}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {},
+          "overrides": []
+        },
+        "options": {
+          "showHeader": true
+        },
+        "gridPos": {"h": 10, "w": 24, "x": 0, "y": 30}
       }
     ],
     "templating": {
